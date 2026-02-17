@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" fill="none">
   <defs>
     <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0284c7"/>
-      <stop offset="100%" style="stop-color:#0ea5e9"/>
+      <stop offset="0%" style="stop-color:#0891b2"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
     </linearGradient>
   </defs>
   <rect x="2" y="4" width="32" height="32" rx="8" fill="url(#logoGrad)"/>
   <path d="M10 16 L18 24 L26 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <text x="42" y="28" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700" fill="#0f172a">
-    Brinde<tspan fill="#0284c7">Flow</tspan>
+  <text x="42" y="28" font-family="'Space Grotesk', system-ui, sans-serif" font-size="22" font-weight="700" fill="#0f172a">
+    Brinde<tspan fill="#0891b2">Flow</tspan>
   </text>
 </svg>
