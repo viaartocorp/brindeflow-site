@@ -75,7 +75,7 @@
                     <a href="#inteligencia" class="hover:text-white transition">IA</a>
                     <a href="#roadmap" class="hover:text-white transition">Roadmap</a>
                     <a href="#contato" class="hover:text-white transition">Contato</a>
-                    <a href="#cadastro" class="inline-flex items-center px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition text-sm">Cadastrar Grátis</a>
+                    <a href="/cadastro" class="inline-flex items-center px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition text-sm">Cadastrar Grátis</a>
                 </div>
                 <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition text-white" aria-label="Menu">
                     <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -89,7 +89,7 @@
                 <a href="#inteligencia" @click="mobileOpen = false" class="block hover:text-white">IA</a>
                 <a href="#roadmap" @click="mobileOpen = false" class="block hover:text-white">Roadmap</a>
                 <a href="#contato" @click="mobileOpen = false" class="block hover:text-white">Contato</a>
-                <a href="#cadastro" @click="mobileOpen = false" class="block mt-2 text-center px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold">Cadastrar Grátis</a>
+                <a href="/cadastro" @click="mobileOpen = false" class="block mt-2 text-center px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold">Cadastrar Grátis</a>
             </div>
         </div>
     </nav>
@@ -125,7 +125,7 @@
                     Explorar Catálogo
                     <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
-                <a href="#cadastro" class="inline-flex items-center px-6 py-3.5 rounded-lg border border-gray-600 text-gray-300 font-semibold hover:bg-white/5 hover:border-gray-500 transition text-base">
+                <a href="/cadastro" class="inline-flex items-center px-6 py-3.5 rounded-lg border border-gray-600 text-gray-300 font-semibold hover:bg-white/5 hover:border-gray-500 transition text-base">
                     Cadastrar Grátis — Ver Preços
                 </a>
             </div>
@@ -469,7 +469,7 @@
                             Histórico de preços e alertas de oportunidade
                         </li>
                     </ul>
-                    <a href="#cadastro" class="inline-flex items-center w-full justify-center py-3 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-sm">
+                    <a href="/cadastro" class="inline-flex items-center w-full justify-center py-3 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-sm">
                         Cadastrar Grátis
                     </a>
                 </div>
@@ -690,40 +690,12 @@
             </div>
 
             <div class="max-w-md mx-auto">
-                <form x-data="{ sent: false, sending: false }" action="https://formspree.io/f/placeholder" method="POST"
-                      @submit.prevent="
-                        sending = true;
-                        const fd = new FormData($el);
-                        fetch($el.action, { method: 'POST', body: fd, headers: { 'Accept': 'application/json' }})
-                          .then(r => { if(r.ok) sent = true; else alert('Erro ao enviar. Tente novamente.'); })
-                          .catch(() => alert('Erro de conexão. Tente novamente.'))
-                          .finally(() => sending = false);
-                      "
-                      class="text-left">
-
-                    <template x-if="!sent">
-                        <div class="space-y-3">
-                            <input type="text" name="nome" required placeholder="Seu nome"
-                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm">
-                            <input type="email" name="email" required placeholder="Seu melhor e-mail"
-                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm">
-                            <input type="text" name="empresa" placeholder="Empresa (opcional)"
-                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm">
-                            <button type="submit" :disabled="sending"
-                                    class="w-full py-3 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-sm disabled:opacity-60 shadow-lg shadow-cyan-500/20">
-                                <span x-show="!sending">Cadastrar Grátis</span>
-                                <span x-show="sending" x-cloak>Enviando...</span>
-                            </button>
-                        </div>
-                    </template>
-                    <template x-if="sent">
-                        <div class="text-center py-6">
-                            <svg class="w-14 h-14 mx-auto text-cyan-400 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <p class="font-display font-bold text-xl text-white">Cadastro realizado!</p>
-                            <p class="text-gray-400 text-sm mt-2">Você receberá um e-mail com os próximos passos para acessar a plataforma.</p>
-                        </div>
-                    </template>
-                </form>
+                <a href="/cadastro"
+                   class="inline-flex items-center justify-center w-full py-4 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-base shadow-lg shadow-cyan-500/20">
+                    Cadastrar Grátis
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+                <p class="text-gray-500 text-xs text-center mt-3">Cadastro exclusivo para empresas do mercado de brindes</p>
             </div>
         </div>
     </section>
@@ -741,7 +713,7 @@
                     <a href="#produto" class="hover:text-white transition">Produto</a>
                     <a href="#inteligencia" class="hover:text-white transition">IA</a>
                     <a href="#roadmap" class="hover:text-white transition">Roadmap</a>
-                    <a href="#cadastro" class="hover:text-white transition">Cadastrar</a>
+                    <a href="/cadastro" class="hover:text-white transition">Cadastrar</a>
                 </nav>
                 <div class="flex items-center gap-3">
                     <a href="mailto:brindeflow@brindeflow.com.br" class="text-sm hover:text-white transition">brindeflow@brindeflow.com.br</a>

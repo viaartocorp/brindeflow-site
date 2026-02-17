@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro — BrindeFlow</title>
+    <meta name="description" content="Cadastre sua empresa no BrindeFlow e acesse preços, estoque e histórico de brindes corporativos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        cyan: {
+                            50: '#ecfeff', 100: '#cffafe', 200: '#a5f3fc', 300: '#67e8f9',
+                            400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490',
+                            800: '#155e75', 900: '#164e63',
+                        },
+                        magenta: {
+                            50: '#fdf2f8', 100: '#fce7f3', 200: '#fbcfe8', 300: '#f9a8d4',
+                            400: '#f472b6', 500: '#ec4899', 600: '#db2777', 700: '#be185d',
+                            800: '#9d174d', 900: '#831843',
+                        },
+                        gold: {
+                            50: '#fefce8', 100: '#fef9c3', 200: '#fef08a', 300: '#fde047',
+                            400: '#facc15', 500: '#eab308', 600: '#ca8a04', 700: '#a16207',
+                            800: '#854d0e', 900: '#713f12',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .hero-grid {
+            background-image:
+                linear-gradient(rgba(6, 182, 212, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.06) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-700 antialiased bg-black min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 inset-x-0 z-50 bg-black/95 backdrop-blur-sm border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center gap-2 shrink-0">
+                    <img src="/assets/logo.svg" alt="BrindeFlow" class="h-8 brightness-0 invert">
+                </a>
+                <a href="/" class="text-sm text-gray-400 hover:text-white transition">&larr; Voltar ao site</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <section class="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden">
+        <div class="absolute inset-0 hero-grid"></div>
+        <div class="absolute top-20 right-0 w-[500px] h-[500px] bg-cyan-500/8 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-10 w-[400px] h-[400px] bg-magenta-500/5 rounded-full blur-3xl"></div>
+
+        <div class="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8"
+             x-data="{
+                step: 1,
+                sending: false,
+                sent: false,
+                errorMsg: '',
+                cnpjLoading: false,
+                cepLoading: false,
+                form: {
+                    nome: '', email: '', telefone: '',
+                    cnpj: '', razao_social: '', nome_fantasia: '',
+                    cep: '', endereco: '', numero: '', complemento: '',
+                    bairro: '', cidade: '', uf: '',
+                    site: '', instagram: '',
+                    num_funcionarios: '',
+                    empresas_brinde: [],
+                    segmento: '',
+                    como_conheceu: '',
+                    termos_aceitos: false
+                },
+                step1Valid() {
+                    return this.form.nome.trim() && this.form.email.trim() && this.form.telefone.trim();
+                },
+                formatCNPJ(val) {
+                    val = val.replace(/\D/g, '').slice(0, 14);
+                    if (val.length > 12) val = val.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/, '$1.$2.$3/$4-$5');
+                    else if (val.length > 8) val = val.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+                    else if (val.length > 5) val = val.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                    else if (val.length > 2) val = val.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+                    return val;
+                },
+                formatPhone(val) {
+                    val = val.replace(/\D/g, '').slice(0, 11);
+                    if (val.length > 6) val = val.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                    else if (val.length > 2) val = val.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+                    return val;
+                },
+                formatCEP(val) {
+                    val = val.replace(/\D/g, '').slice(0, 8);
+                    if (val.length > 5) val = val.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
+                    return val;
+                },
+                async lookupCNPJ() {
+                    const raw = this.form.cnpj.replace(/\D/g, '');
+                    if (raw.length !== 14) return;
+                    this.cnpjLoading = true;
+                    try {
+                        const resp = await fetch('/api/cnpj/' + raw);
+                        if (resp.ok) {
+                            const d = resp.ok ? await resp.json() : null;
+                            if (d && d.razao_social) {
+                                this.form.razao_social = d.razao_social || '';
+                                this.form.nome_fantasia = d.estabelecimento?.nome_fantasia || '';
+                                if (d.estabelecimento) {
+                                    const e = d.estabelecimento;
+                                    this.form.cep = e.cep || '';
+                                    this.form.endereco = [e.tipo_logradouro, e.logradouro].filter(Boolean).join(' ');
+                                    this.form.numero = e.numero || '';
+                                    this.form.complemento = e.complemento || '';
+                                    this.form.bairro = e.bairro || '';
+                                    this.form.cidade = e.cidade?.nome || '';
+                                    this.form.uf = e.estado?.sigla || '';
+                                }
+                            }
+                        }
+                    } catch (e) { console.error(e); }
+                    this.cnpjLoading = false;
+                },
+                async lookupCEP() {
+                    const raw = this.form.cep.replace(/\D/g, '');
+                    if (raw.length !== 8) return;
+                    this.cepLoading = true;
+                    try {
+                        const resp = await fetch('/api/cep/' + raw);
+                        if (resp.ok) {
+                            const d = await resp.json();
+                            if (d && !d.erro) {
+                                this.form.endereco = d.logradouro || '';
+                                this.form.bairro = d.bairro || '';
+                                this.form.cidade = d.localidade || '';
+                                this.form.uf = d.uf || '';
+                            }
+                        }
+                    } catch (e) { console.error(e); }
+                    this.cepLoading = false;
+                },
+                async submit() {
+                    if (!this.form.termos_aceitos) {
+                        this.errorMsg = 'Você precisa aceitar os termos para continuar.';
+                        return;
+                    }
+                    this.sending = true;
+                    this.errorMsg = '';
+                    try {
+                        const resp = await fetch('/api/registrations', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.form)
+                        });
+                        const data = await resp.json();
+                        if (resp.ok) {
+                            this.sent = true;
+                        } else {
+                            this.errorMsg = data.error || 'Erro ao cadastrar. Tente novamente.';
+                        }
+                    } catch (e) {
+                        this.errorMsg = 'Erro de conexão. Tente novamente.';
+                    }
+                    this.sending = false;
+                }
+             }">
+
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <h1 class="font-display text-3xl md:text-4xl font-bold text-white mb-3">
+                    Cadastre sua empresa
+                </h1>
+                <p class="text-gray-400 max-w-lg mx-auto">
+                    Exclusivo para empresas do mercado de brindes corporativos. Seu cadastro será analisado e aprovado manualmente.
+                </p>
+            </div>
+
+            <!-- Step indicator -->
+            <div x-show="!sent" class="flex items-center justify-center gap-3 mb-8">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                         :class="step >= 1 ? 'bg-cyan-500 text-black' : 'bg-white/10 text-gray-500'">1</div>
+                    <span class="text-sm font-medium" :class="step >= 1 ? 'text-white' : 'text-gray-500'">Seus dados</span>
+                </div>
+                <div class="w-12 h-px" :class="step >= 2 ? 'bg-cyan-500' : 'bg-white/10'"></div>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+                         :class="step >= 2 ? 'bg-cyan-500 text-black' : 'bg-white/10 text-gray-500'">2</div>
+                    <span class="text-sm font-medium" :class="step >= 2 ? 'text-white' : 'text-gray-500'">Empresa</span>
+                </div>
+            </div>
+
+            <!-- Success state -->
+            <template x-if="sent">
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-cyan-400 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <h2 class="font-display font-bold text-2xl text-white mb-2">Cadastro realizado!</h2>
+                    <p class="text-gray-400 max-w-md mx-auto mb-6">Seu cadastro será analisado pela nossa equipe. Você receberá um e-mail quando sua conta for aprovada.</p>
+                    <a href="/" class="inline-flex items-center px-6 py-3 rounded-lg border border-gray-600 text-gray-300 font-semibold hover:bg-white/5 transition text-sm">
+                        &larr; Voltar ao site
+                    </a>
+                </div>
+            </template>
+
+            <!-- Form -->
+            <div x-show="!sent" class="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 md:p-8">
+
+                <!-- Step 1: Personal data -->
+                <div x-show="step === 1">
+                    <h2 class="font-display font-bold text-lg text-white mb-6">Seus dados de contato</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1.5">Nome completo *</label>
+                            <input type="text" x-model="form.nome" required
+                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                   placeholder="Seu nome completo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1.5">E-mail *</label>
+                            <input type="email" x-model="form.email" required
+                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                   placeholder="seu@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1.5">Telefone / WhatsApp *</label>
+                            <input type="tel" :value="formatPhone(form.telefone)"
+                                   @input="form.telefone = $event.target.value"
+                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                   placeholder="(11) 99999-9999">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end">
+                        <button @click="if (step1Valid()) step = 2"
+                                :class="step1Valid() ? 'bg-cyan-500 hover:bg-cyan-400 text-black' : 'bg-white/10 text-gray-500 cursor-not-allowed'"
+                                class="px-8 py-3 rounded-lg font-bold transition text-sm">
+                            Continuar
+                            <svg class="inline ml-1 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Company data -->
+                <div x-show="step === 2" x-cloak>
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="font-display font-bold text-lg text-white">Dados da empresa</h2>
+                        <button @click="step = 1" class="text-sm text-gray-400 hover:text-white transition">&larr; Voltar</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- CNPJ with auto-lookup -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1.5">CNPJ *</label>
+                            <div class="relative">
+                                <input type="text" :value="formatCNPJ(form.cnpj)"
+                                       @input="form.cnpj = $event.target.value"
+                                       @blur="lookupCNPJ()"
+                                       class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                       placeholder="00.000.000/0000-00">
+                                <div x-show="cnpjLoading" class="absolute right-3 top-3">
+                                    <svg class="w-5 h-5 text-cyan-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Os dados serão preenchidos automaticamente</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Razão Social</label>
+                                <input type="text" x-model="form.razao_social"
+                                       class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                       placeholder="Razão social da empresa">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-1.5">Nome Fantasia</label>
+                                <input type="text" x-model="form.nome_fantasia"
+                                       class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                       placeholder="Nome fantasia">
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="border-t border-white/10 pt-4 mt-4">
+                            <h3 class="text-sm font-medium text-gray-300 mb-3">Endereço</h3>
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-1">CEP</label>
+                                        <div class="relative">
+                                            <input type="text" :value="formatCEP(form.cep)"
+                                                   @input="form.cep = $event.target.value"
+                                                   @blur="lookupCEP()"
+                                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                                   placeholder="00000-000">
+                                            <div x-show="cepLoading" class="absolute right-3 top-3">
+                                                <svg class="w-5 h-5 text-cyan-400 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-medium text-gray-400 mb-1">Rua</label>
+                                        <input type="text" x-model="form.endereco"
+                                               class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                               placeholder="Logradouro">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-1">Número</label>
+                                        <input type="text" x-model="form.numero"
+                                               class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                               placeholder="Nº">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-1">Complemento</label>
+                                        <input type="text" x-model="form.complemento"
+                                               class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                               placeholder="Sala, Andar...">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-1">Bairro</label>
+                                        <input type="text" x-model="form.bairro"
+                                               class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                               placeholder="Bairro">
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 col-span-2 md:col-span-1">
+                                        <div class="col-span-2">
+                                            <label class="block text-xs font-medium text-gray-400 mb-1">Cidade</label>
+                                            <input type="text" x-model="form.cidade"
+                                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                                   placeholder="Cidade">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-400 mb-1">UF</label>
+                                            <input type="text" x-model="form.uf" maxlength="2"
+                                                   class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                                   placeholder="UF">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Online presence -->
+                        <div class="border-t border-white/10 pt-4 mt-4">
+                            <h3 class="text-sm font-medium text-gray-300 mb-3">Presença online</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-1">Site</label>
+                                    <input type="url" x-model="form.site"
+                                           class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                           placeholder="https://suaempresa.com.br">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-1">Instagram</label>
+                                    <input type="text" x-model="form.instagram"
+                                           class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm"
+                                           placeholder="@suaempresa">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Company profile -->
+                        <div class="border-t border-white/10 pt-4 mt-4">
+                            <h3 class="text-sm font-medium text-gray-300 mb-3">Perfil da empresa</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-1">Número de funcionários</label>
+                                    <select x-model="form.num_funcionarios"
+                                            class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm">
+                                        <option value="" class="bg-gray-900">Selecione</option>
+                                        <option value="1-5" class="bg-gray-900">1 a 5</option>
+                                        <option value="6-20" class="bg-gray-900">6 a 20</option>
+                                        <option value="21-50" class="bg-gray-900">21 a 50</option>
+                                        <option value="51-100" class="bg-gray-900">51 a 100</option>
+                                        <option value="100+" class="bg-gray-900">Mais de 100</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-2">Com quais empresas de brinde trabalha?</label>
+                                    <div class="flex flex-wrap gap-3">
+                                        <template x-for="empresa in ['SPOT', 'XBZ', 'ASIA', 'Só Marcas']" :key="empresa">
+                                            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition text-sm"
+                                                   :class="form.empresas_brinde.includes(empresa) ? 'border-cyan-500 bg-cyan-500/10 text-white' : 'border-white/15 bg-white/5 text-gray-400 hover:border-white/30'">
+                                                <input type="checkbox" :value="empresa" x-model="form.empresas_brinde" class="hidden">
+                                                <svg x-show="form.empresas_brinde.includes(empresa)" class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                                <svg x-show="!form.empresas_brinde.includes(empresa)" class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                                                <span x-text="empresa"></span>
+                                            </label>
+                                        </template>
+                                        <label class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition text-sm"
+                                               :class="form.empresas_brinde.includes('Outras') ? 'border-cyan-500 bg-cyan-500/10 text-white' : 'border-white/15 bg-white/5 text-gray-400 hover:border-white/30'">
+                                            <input type="checkbox" value="Outras" x-model="form.empresas_brinde" class="hidden">
+                                            <svg x-show="form.empresas_brinde.includes('Outras')" class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                            <svg x-show="!form.empresas_brinde.includes('Outras')" class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                                            <span>Outras</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-1">Segmento de atuação</label>
+                                    <select x-model="form.segmento"
+                                            class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm">
+                                        <option value="" class="bg-gray-900">Selecione</option>
+                                        <option value="Distribuidor" class="bg-gray-900">Distribuidor</option>
+                                        <option value="Importador" class="bg-gray-900">Importador</option>
+                                        <option value="Fabricante" class="bg-gray-900">Fabricante</option>
+                                        <option value="Agência" class="bg-gray-900">Agência</option>
+                                        <option value="Outro" class="bg-gray-900">Outro</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-1">Como conheceu o BrindeFlow?</label>
+                                    <select x-model="form.como_conheceu"
+                                            class="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/15 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 text-sm">
+                                        <option value="" class="bg-gray-900">Selecione</option>
+                                        <option value="LinkedIn" class="bg-gray-900">LinkedIn</option>
+                                        <option value="Google" class="bg-gray-900">Google</option>
+                                        <option value="Indicação" class="bg-gray-900">Indicação</option>
+                                        <option value="Evento" class="bg-gray-900">Evento</option>
+                                        <option value="Outro" class="bg-gray-900">Outro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms -->
+                        <div class="border-t border-white/10 pt-4 mt-4">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" x-model="form.termos_aceitos"
+                                       class="mt-1 w-4 h-4 rounded border-white/30 bg-white/10 text-cyan-500 focus:ring-cyan-500/50">
+                                <span class="text-sm text-gray-400">
+                                    Aceito os <a href="#" class="text-cyan-400 underline hover:text-cyan-300">termos de serviço</a> e a
+                                    <a href="#" class="text-cyan-400 underline hover:text-cyan-300">política de privacidade</a> do BrindeFlow. *
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Error message -->
+                        <div x-show="errorMsg" x-cloak class="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                            <p class="text-sm text-red-400" x-text="errorMsg"></p>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="flex items-center justify-between pt-2">
+                            <button @click="step = 1" class="text-sm text-gray-400 hover:text-white transition">&larr; Voltar</button>
+                            <button @click="submit()" :disabled="sending"
+                                    class="px-8 py-3 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-sm disabled:opacity-60 shadow-lg shadow-cyan-500/20">
+                                <span x-show="!sending">Cadastrar</span>
+                                <span x-show="sending" x-cloak>Enviando...</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/5 text-gray-500 py-8">
+        <div class="max-w-6xl mx-auto px-4 text-center text-sm">
+            <p>&copy; 2026 BrindeFlow. Todos os direitos reservados. Feito por ViaArto Corp</p>
+        </div>
+    </footer>
+
+</body>
+</html>

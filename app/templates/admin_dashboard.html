@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — BrindeFlow Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        cyan: { 50: '#ecfeff', 100: '#cffafe', 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490' },
+                        magenta: { 50: '#fdf2f8', 100: '#fce7f3', 400: '#f472b6', 500: '#ec4899', 600: '#db2777' },
+                        gold: { 50: '#fefce8', 100: '#fef9c3', 400: '#facc15', 500: '#eab308', 600: '#ca8a04' },
+                    }
+                }
+            }
+        }
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>[x-cloak] { display: none !important; }</style>
+</head>
+<body class="font-sans antialiased bg-gray-50 min-h-screen" x-data="{ search: '', expandedId: null }">
+
+    <!-- Header -->
+    <header class="bg-black text-white border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <img src="/assets/logo.svg" alt="BrindeFlow" class="h-7 brightness-0 invert">
+                    <span class="text-sm font-mono text-gray-400">/ Admin</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('export_csv') }}"
+                       class="text-sm text-gray-400 hover:text-white transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Exportar CSV
+                    </a>
+                    <a href="{{ url_for('admin_logout') }}" class="text-sm text-gray-400 hover:text-white transition">Sair</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {% set total = registrations|length %}
+            {% set pendentes = registrations|selectattr('status', 'equalto', 'pendente')|list|length %}
+            {% set aprovados = registrations|selectattr('status', 'equalto', 'aprovado')|list|length %}
+            {% set rejeitados = registrations|selectattr('status', 'equalto', 'rejeitado')|list|length %}
+
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+                <div class="text-sm text-gray-500 font-medium">Total</div>
+                <div class="font-mono text-2xl font-bold text-gray-900 mt-1">{{ total }}</div>
+            </div>
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+                <div class="text-sm text-gray-500 font-medium">Pendentes</div>
+                <div class="font-mono text-2xl font-bold text-gold-600 mt-1">{{ pendentes }}</div>
+            </div>
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+                <div class="text-sm text-gray-500 font-medium">Aprovados</div>
+                <div class="font-mono text-2xl font-bold text-cyan-600 mt-1">{{ aprovados }}</div>
+            </div>
+            <div class="bg-white rounded-xl p-5 border border-gray-200">
+                <div class="text-sm text-gray-500 font-medium">Rejeitados</div>
+                <div class="font-mono text-2xl font-bold text-magenta-600 mt-1">{{ rejeitados }}</div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="mb-6">
+            <input type="text" x-model="search" placeholder="Buscar por nome, e-mail, CNPJ ou empresa..."
+                   class="w-full md:w-96 px-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500">
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200">
+                            <th class="text-left px-4 py-3 font-medium text-gray-500">Nome</th>
+                            <th class="text-left px-4 py-3 font-medium text-gray-500">E-mail</th>
+                            <th class="text-left px-4 py-3 font-medium text-gray-500">Empresa</th>
+                            <th class="text-left px-4 py-3 font-medium text-gray-500">CNPJ</th>
+                            <th class="text-left px-4 py-3 font-medium text-gray-500">Status</th>
+                            <th class="text-left px-4 py-3 font-medium text-gray-500">Data</th>
+                            <th class="text-left px-4 py-3 font-medium text-gray-500"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reg in registrations %}
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition"
+                            x-show="!search || '{{ reg.nome }} {{ reg.email }} {{ reg.cnpj }} {{ reg.nome_fantasia }} {{ reg.razao_social }}'.toLowerCase().includes(search.toLowerCase())">
+                            <td class="px-4 py-3 font-medium text-gray-900">{{ reg.nome }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ reg.email }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ reg.nome_fantasia or reg.razao_social or '—' }}</td>
+                            <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ reg.cnpj }}</td>
+                            <td class="px-4 py-3">
+                                {% if reg.status == 'pendente' %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gold-100 text-gold-600">Pendente</span>
+                                {% elif reg.status == 'aprovado' %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-700">Aprovado</span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-magenta-100 text-magenta-600">Rejeitado</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-xs text-gray-500">{{ reg.created_at[:16] if reg.created_at else '—' }}</td>
+                            <td class="px-4 py-3">
+                                <button @click="expandedId = expandedId === {{ reg.id }} ? null : {{ reg.id }}"
+                                        class="text-gray-400 hover:text-gray-700 transition">
+                                    <svg class="w-5 h-5 transition-transform" :class="expandedId === {{ reg.id }} ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <!-- Expanded details -->
+                        <tr x-show="expandedId === {{ reg.id }}" x-cloak
+                            x-show="!search || '{{ reg.nome }} {{ reg.email }} {{ reg.cnpj }} {{ reg.nome_fantasia }} {{ reg.razao_social }}'.toLowerCase().includes(search.toLowerCase())">
+                            <td colspan="7" class="px-4 py-4 bg-gray-50">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <!-- Contact -->
+                                    <div>
+                                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Contato</h4>
+                                        <dl class="space-y-1 text-sm">
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-20 shrink-0">Telefone:</dt><dd class="text-gray-900">{{ reg.telefone }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-20 shrink-0">Site:</dt><dd class="text-gray-900">{{ reg.site or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-20 shrink-0">Instagram:</dt><dd class="text-gray-900">{{ reg.instagram or '—' }}</dd></div>
+                                        </dl>
+                                    </div>
+                                    <!-- Company -->
+                                    <div>
+                                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Empresa</h4>
+                                        <dl class="space-y-1 text-sm">
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">Razão Social:</dt><dd class="text-gray-900">{{ reg.razao_social or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">Endereço:</dt><dd class="text-gray-900">{{ [reg.endereco, reg.numero, reg.complemento, reg.bairro, reg.cidade, reg.uf]|select|join(', ') or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">CEP:</dt><dd class="text-gray-900">{{ reg.cep or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">Funcionários:</dt><dd class="text-gray-900">{{ reg.num_funcionarios or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">Segmento:</dt><dd class="text-gray-900">{{ reg.segmento or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">Fornecedores:</dt><dd class="text-gray-900">{{ reg.empresas_brinde or '—' }}</dd></div>
+                                            <div class="flex gap-2"><dt class="text-gray-500 w-24 shrink-0">Conheceu via:</dt><dd class="text-gray-900">{{ reg.como_conheceu or '—' }}</dd></div>
+                                        </dl>
+                                    </div>
+                                    <!-- Actions -->
+                                    <div>
+                                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ações</h4>
+                                        <div class="flex flex-wrap gap-2 mb-4">
+                                            <form method="POST" action="{{ url_for('update_status', reg_id=reg.id) }}" class="inline">
+                                                <input type="hidden" name="status" value="aprovado">
+                                                <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-100 text-cyan-700 hover:bg-cyan-200 transition">Aprovar</button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('update_status', reg_id=reg.id) }}" class="inline">
+                                                <input type="hidden" name="status" value="rejeitado">
+                                                <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-magenta-100 text-magenta-600 hover:bg-magenta-200 transition">Rejeitar</button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('update_status', reg_id=reg.id) }}" class="inline">
+                                                <input type="hidden" name="status" value="pendente">
+                                                <button type="submit" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-gold-100 text-gold-600 hover:bg-gold-200 transition">Pendente</button>
+                                            </form>
+                                        </div>
+                                        <form method="POST" action="{{ url_for('update_notes', reg_id=reg.id) }}">
+                                            <label class="block text-xs text-gray-500 mb-1">Notas</label>
+                                            <textarea name="notes" rows="3"
+                                                      class="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 resize-none">{{ reg.notes or '' }}</textarea>
+                                            <button type="submit" class="mt-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition">Salvar notas</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {% if not registrations %}
+                        <tr>
+                            <td colspan="7" class="px-4 py-12 text-center text-gray-400">
+                                Nenhum cadastro encontrado.
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
