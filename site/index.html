@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrindeFlow — Catálogo Inteligente de Brindes Corporativos</title>
     <meta name="description" content="Centralize produtos da SPOT, XBZ, ASIA e Só Marcas em um único catálogo com busca inteligente, histórico de preços e IA que enriquece seus dados.">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="theme-color" content="#1a417e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -20,19 +26,19 @@
                     },
                     colors: {
                         cyan: {
-                            50: '#ecfeff', 100: '#cffafe', 200: '#a5f3fc', 300: '#67e8f9',
-                            400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490',
-                            800: '#155e75', 900: '#164e63',
+                            50: '#f0f4fa', 100: '#dce4f2', 200: '#b9c9e5', 300: '#8ba6d2',
+                            400: '#5a7fb8', 500: '#1a417e', 600: '#16376b', 700: '#122d58',
+                            800: '#0e2345', 900: '#0a1932',
                         },
                         magenta: {
-                            50: '#fdf2f8', 100: '#fce7f3', 200: '#fbcfe8', 300: '#f9a8d4',
-                            400: '#f472b6', 500: '#ec4899', 600: '#db2777', 700: '#be185d',
-                            800: '#9d174d', 900: '#831843',
+                            50: '#fef6ee', 100: '#fde9d4', 200: '#fbd0a8', 300: '#f8b172',
+                            400: '#f5933d', 500: '#ed7d27', 600: '#d4661b', 700: '#b04f16',
+                            800: '#8c3d14', 900: '#6e3012',
                         },
                         gold: {
-                            50: '#fefce8', 100: '#fef9c3', 200: '#fef08a', 300: '#fde047',
-                            400: '#facc15', 500: '#eab308', 600: '#ca8a04', 700: '#a16207',
-                            800: '#854d0e', 900: '#713f12',
+                            50: '#fef6ee', 100: '#fde9d4', 200: '#fbd0a8', 300: '#f8b172',
+                            400: '#f5933d', 500: '#ed7d27', 600: '#d4661b', 700: '#b04f16',
+                            800: '#8c3d14', 900: '#6e3012',
                         },
                     }
                 }
@@ -44,8 +50,8 @@
         [x-cloak] { display: none !important; }
         .hero-grid {
             background-image:
-                linear-gradient(rgba(6, 182, 212, 0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(6, 182, 212, 0.06) 1px, transparent 1px);
+                linear-gradient(rgba(26, 65, 126, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(26, 65, 126, 0.08) 1px, transparent 1px);
             background-size: 60px 60px;
         }
         @keyframes fadeInUp {
@@ -68,14 +74,14 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="#" class="flex items-center gap-2 shrink-0">
-                    <img src="/assets/logo.svg" alt="BrindeFlow" class="h-8 brightness-0 invert">
+                    <img src="/assets/logo-brindeflow-cor.png" alt="BrindeFlow" class="h-[100px]">
                 </a>
                 <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
                     <a href="#produto" class="hover:text-white transition">Produto</a>
                     <a href="#inteligencia" class="hover:text-white transition">IA</a>
                     <a href="#roadmap" class="hover:text-white transition">Roadmap</a>
                     <a href="#contato" class="hover:text-white transition">Contato</a>
-                    <a href="/cadastro" class="inline-flex items-center px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold hover:bg-cyan-400 transition text-sm">Cadastrar Grátis</a>
+                    <a href="/cadastro" class="inline-flex items-center px-4 py-2 rounded-lg bg-cyan-500 text-white font-semibold hover:bg-cyan-400 transition text-sm">Cadastrar Grátis</a>
                 </div>
                 <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition text-white" aria-label="Menu">
                     <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -89,7 +95,7 @@
                 <a href="#inteligencia" @click="mobileOpen = false" class="block hover:text-white">IA</a>
                 <a href="#roadmap" @click="mobileOpen = false" class="block hover:text-white">Roadmap</a>
                 <a href="#contato" @click="mobileOpen = false" class="block hover:text-white">Contato</a>
-                <a href="/cadastro" @click="mobileOpen = false" class="block mt-2 text-center px-4 py-2 rounded-lg bg-cyan-500 text-black font-semibold">Cadastrar Grátis</a>
+                <a href="/cadastro" @click="mobileOpen = false" class="block mt-2 text-center px-4 py-2 rounded-lg bg-cyan-500 text-white font-semibold">Cadastrar Grátis</a>
             </div>
         </div>
     </nav>
@@ -121,7 +127,7 @@
             </p>
 
             <div class="mt-8 flex flex-col sm:flex-row items-start gap-4 fade-in-up fade-in-up-delay-3">
-                <a href="#catalogo" class="inline-flex items-center px-6 py-3.5 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-base shadow-lg shadow-cyan-500/20">
+                <a href="#catalogo" class="inline-flex items-center px-6 py-3.5 rounded-lg bg-cyan-500 text-white font-bold hover:bg-cyan-400 transition text-base shadow-lg shadow-cyan-500/20">
                     Explorar Catálogo
                     <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
@@ -447,7 +453,7 @@
 
                 <!-- Registered tier -->
                 <div class="bg-white rounded-xl p-8 border-2 border-gold-400 shadow-sm relative">
-                    <div class="absolute -top-3 right-6 px-3 py-0.5 bg-gold-500 text-black text-xs font-bold rounded-full uppercase tracking-wide">Grátis</div>
+                    <div class="absolute -top-3 right-6 px-3 py-0.5 bg-gold-500 text-white text-xs font-bold rounded-full uppercase tracking-wide">Grátis</div>
                     <div class="text-sm font-mono text-magenta-600 font-bold uppercase tracking-wider mb-3">Cadastro Gratuito</div>
                     <h3 class="font-display text-xl font-bold text-gray-900 mb-2">Veja preços e estoque</h3>
                     <p class="text-sm text-gray-500 mb-6">Cadastre-se gratuitamente e desbloqueie dados de inteligência.</p>
@@ -469,7 +475,7 @@
                             Histórico de preços e alertas de oportunidade
                         </li>
                     </ul>
-                    <a href="/cadastro" class="inline-flex items-center w-full justify-center py-3 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-sm">
+                    <a href="/cadastro" class="inline-flex items-center w-full justify-center py-3 rounded-lg bg-cyan-500 text-white font-bold hover:bg-cyan-400 transition text-sm">
                         Cadastrar Grátis
                     </a>
                 </div>
@@ -492,7 +498,7 @@
             <div class="grid md:grid-cols-3 gap-6 md:gap-8">
                 <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-cyan-500 text-black flex items-center justify-center font-display font-bold text-sm">RC</div>
+                        <div class="w-10 h-10 rounded-full bg-cyan-500 text-white flex items-center justify-center font-display font-bold text-sm">RC</div>
                         <div>
                             <div class="font-display font-bold text-gray-900 text-sm">Ricardo Campos</div>
                             <div class="text-xs text-gray-500">Distribuidor — São Paulo, SP</div>
@@ -516,7 +522,7 @@
 
                 <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-gold-500 text-black flex items-center justify-center font-display font-bold text-sm">FS</div>
+                        <div class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-display font-bold text-sm">FS</div>
                         <div>
                             <div class="font-display font-bold text-gray-900 text-sm">Fernando Silva</div>
                             <div class="text-xs text-gray-500">Diretor Comercial — Belo Horizonte, MG</div>
@@ -587,7 +593,7 @@
                 <!-- Phase 1 — Active -->
                 <div class="relative flex gap-6 pb-10">
                     <div class="flex flex-col items-center">
-                        <div class="w-10 h-10 rounded-full bg-cyan-500 text-black flex items-center justify-center text-lg shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-cyan-500 text-white flex items-center justify-center text-lg shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         </div>
                         <div class="w-0.5 flex-1 bg-cyan-200 mt-2"></div>
@@ -691,7 +697,7 @@
 
             <div class="max-w-md mx-auto">
                 <a href="/cadastro"
-                   class="inline-flex items-center justify-center w-full py-4 rounded-lg bg-cyan-500 text-black font-bold hover:bg-cyan-400 transition text-base shadow-lg shadow-cyan-500/20">
+                   class="inline-flex items-center justify-center w-full py-4 rounded-lg bg-cyan-500 text-white font-bold hover:bg-cyan-400 transition text-base shadow-lg shadow-cyan-500/20">
                     Cadastrar Grátis
                     <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </a>
@@ -707,7 +713,7 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex items-center gap-3">
-                    <img src="/assets/logo.svg" alt="BrindeFlow" class="h-7 brightness-0 invert opacity-80">
+                    <img src="/assets/logo-brindeflow-cor.png" alt="BrindeFlow" class="h-[100px]">
                 </div>
                 <nav class="flex flex-wrap items-center justify-center gap-6 text-sm">
                     <a href="#produto" class="hover:text-white transition">Produto</a>
@@ -730,7 +736,7 @@
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                     </a>
                 </div>
-                <p class="text-gray-500 text-xs">Feito por ViaArto Corp</p>
+                <p class="text-gray-500 text-xs"></p>
             </div>
         </div>
     </footer>
